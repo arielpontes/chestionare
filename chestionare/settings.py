@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = True
 
 TEMPLATE_DIRS = (
     BASE_DIR+'/chestionare/templates',
+    BASE_DIR+'/questionnaires/templates',
 )
 
 ALLOWED_HOSTS = []
@@ -51,6 +52,8 @@ MIDDLEWARE_CLASSES = (
      'django.contrib.messages.middleware.MessageMiddleware', # required by admin
 #     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+SESSION_SAVE_EVERY_REQUEST = True
 
 ROOT_URLCONF = 'chestionare.urls'
 

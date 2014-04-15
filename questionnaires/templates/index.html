@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Available questionnaires{% endblock %}
+{% block h1 %}Available questionnaires{% endblock %}
+
+{% block content %}
+<ul>
+{% for questionnaire in questionnaires %}
+    <li><a href="questionnaires/{{ questionnaire.id }}">{{ questionnaire }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
