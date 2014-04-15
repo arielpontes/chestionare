@@ -35,6 +35,7 @@ def show(request, id):
         currquest["answers"][str(page.id)] = request.POST
         return redirect("show", id) # Go to next page
     else:
+        page.answer_set
         # Renders the page
         return render(request, 'show.html', {'page': page})
 
