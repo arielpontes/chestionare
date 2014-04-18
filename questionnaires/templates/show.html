@@ -1,26 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{{ page.title }}{% endblock %}
-{% block h1 %}{{ page.title }}{% endblock %}
+{% block title %}{{ answer.page.title }}{% endblock %}
+{% block h1 %}{{ answer.page.title }}{% endblock %}
 
 {% block content %}
 <form action="" method="post">
 	<ul>
-	{% for question in page.question_set.all %}
-	    <li>
-	    	{{ question }}
-	    	<ul style="list-style-type: none;">
-				{% for answer in question.answer_set.all %}
-				    <li>
-				    	<label>
-					    	<input type="checkbox" name="question{{ question.id }}" value="{{ answer.id }}"> 
-					    	{{ answer }}
-				    	</label>
-				   	</li>
-				{% endfor %}
-			</ul>
-	    </li>
-	{% endfor %}
+	{{ answer.page_form.to_html | safe }}
 	</ul>
 	<input type="submit" value="Submit">
 </form>

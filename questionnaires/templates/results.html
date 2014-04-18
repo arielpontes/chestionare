@@ -1,8 +1,27 @@
 {% extends "base.html" %}
 
 {% block title %}Results{% endblock %}
-{% block h1 %}Results{% endblock %}
+{% block h1 %}You finished the questionnaire "{{ outcome.questionnaire.name }}"{% endblock %}
 
 {% block content %}
-<div>Congratulations! You finished the test "{{ questionnaire.name }}"</div>
+<h2>You scored {{ outcome.total_score }}: {{ outcome.title }}</h2>
+<div>{{ outcome.message }}</div>
+<div>
+	<p>If only you had answered the following questions differently, you would have scored {{ outcome.would_have_got }}:</p>
+	{% if outcome.alternative_outcome %}
+	<p>{{ outcome.alternative_outcome.title }}</p>
+	{% endif %}
+	{% for alternative in outcome.alternative_solution %}
+		<ul>
+			<li>
+				{{ alternative.question }}
+				<ul>
+					<li>
+						{{ alternative }}
+					</li>
+				</ul>
+			</li>
+		</ul>
+	{% endfor %}
+</div>
 {% endblock %}

@@ -1,21 +1,24 @@
 from django.contrib import admin
-from models import Questionnaire, Page, Question, Answer
+from models import Questionnaire, Page, Question, Alternative, Outcome
 
 class PageInline(admin.TabularInline):
     model = Page
 
+class OutcomeInline(admin.TabularInline):
+    model = Outcome
+
 class QuestionnaireAdmin(admin.ModelAdmin):
     inlines = [
-        PageInline,
+        PageInline, OutcomeInline,
     ]
 
-class AnswerInline(admin.TabularInline):
-    model = Answer
+class AlternativeInline(admin.TabularInline):
+    model = Alternative
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('description', 'page')
     inlines = [
-        AnswerInline,
+        AlternativeInline,
     ]
 
 admin.site.register(Questionnaire, QuestionnaireAdmin)
