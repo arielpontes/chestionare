@@ -3,7 +3,6 @@ from django.core.urlresolvers import reverse
 from django.core import management
 
 from questionnaires.models import Questionnaire
-from questionnaires.utils import *
 
 def create_questionnaire(name, description):
     # Create questionnaire
@@ -32,10 +31,8 @@ class QuestionnaireViewTests(TestCase):
         self.assertContains(response, "Sorry, but the questionnaire you selected has no questions and can therefore not be answered.")
     
     def test_solve_view_with_valid_questionnaire(self):
-        #load_fixtures('questionnaires/fixtures/sample_data.json')
         management.call_command('loaddata', 'questionnaires/fixtures/sample_data.json')
         response = self.client.get(reverse('solve', args=(3,)))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Demographics")
-        #management.call_command('flush', interactive=False, load_initial_data=False)
     
