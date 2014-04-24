@@ -4,9 +4,13 @@
 {% block h1 %}Available questionnaires{% endblock %}
 
 {% block content %}
-<ul>
-{% for questionnaire in questionnaires %}
-    <li><a href="questionnaires/{{ questionnaire.id }}">{{ questionnaire }}</a></li>
-{% endfor %}
-</ul>
+	{% if questionnaires %}
+		<ul>
+		{% for questionnaire in questionnaires %}
+		    <li><a href="questionnaires/{{ questionnaire.id }}">{{ questionnaire }}</a></li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>There is no questionnaire available yet.</p>
+	{% endif %}
 {% endblock %}

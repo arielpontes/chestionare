@@ -1,13 +1,18 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.views import generic
 
 from models import Questionnaire, OpenQuestionnaire
 
-def index(request):
-    questionnaires = Questionnaire.objects.all()
-    return render(request, 'index.html', {'questionnaires': questionnaires})
+class IndexView(generic.ListView):
+    template_name = 'index.html'
+    context_object_name = 'questionnaires'
 
-def show(request, id):
+    def get_queryset(self):
+        """Returns all questionnaires."""
+        return Questionnaire.objects.all()
+
+def solve(request, id):
     answer = OpenQuestionnaire(request, id)
     # If the questionnaire doesn't have pages or questions, show page for invalid questionnaire
     if answer.invalid_questionnaire: return render(request, 'invalid.html')
@@ -15,7 +20,7 @@ def show(request, id):
         if answer.is_valid() and not answer.go_to_next_page():
             # If the answer to the open questionnaire is valid and there is no next page, show the results
             return render(request, 'results.html', { "outcome": answer.outcome() })
-    return render(request, 'show.html', { 'answer': answer })
+    return render(request, 'solve.html', { 'answer': answer })
 
 def clear_test(request):
     try: request.session.pop("open_questionnaires")

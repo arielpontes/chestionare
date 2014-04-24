@@ -1,4 +1,6 @@
 from django.db import models
+from django.db import connection
+from django.conf import settings
 
 class Questionnaire(models.Model):
     name = models.CharField(max_length=255)
@@ -6,6 +8,28 @@ class Questionnaire(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    @staticmethod
+    def create_from_dumps():
+        dump_files = ["questionnaire.sql","outcome.sql","page.sql","question.sql","alternative.sql"]
+        for file in dump_files:
+            f = open(settings.BASE_DIR+'/questionnaires/dumps/'+file,'r')
+            sql = f.read()
+            cursor = connection.cursor()
+            cursor.executescript(sql)
+    
+    '''
+    def is_valid(self):
+        pages = list(self.page_set)
+        if not pages: return False
+        for p in pages:
+            questions = list(p.question_set)
+            if not questions: return False
+            for q in questions:
+                if not q.alternative_set.exists(): return False
+        if not self.outcome_set.exists(): return False
+        return True
+    '''                
 
 class Page(models.Model):
     questionnaire = models.ForeignKey(Questionnaire)
@@ -211,8 +235,7 @@ class OpenQuestionnaire():
         #outcomes = Outcome.objects. 
     
     def calculate_alternative_solution(self, outcome, other_score, other_alternatives, better):
-        print "other_alternatives: "
-        print other_alternatives
+        # If 'better' is 1, look for a better solution. If it's -1, look for a worse solution. 
         # The alternatives in 'other_alternatives' are in
         # the order that they appear in the questionnaire
         
@@ -225,6 +248,9 @@ class OpenQuestionnaire():
         would_have_got = outcome.total_score
         other_indices = []
         i = 0
+        # Loop through the questions with most potential to change the score
+        # And change the selected answer (for better or worse) until the score
+        # crosses the threshold to another outcome
         while would_have_got*better < other_score*better:
             other_index = ordered_indices[i]
             other_indices.append(other_index)
@@ -232,10 +258,9 @@ class OpenQuestionnaire():
             i+=1
         outcome.would_have_got = would_have_got
         other_indices.sort()
+        # Populate array with the questions that had to be changed,
+        # in the order they appear in the questionnaire
         other_solution = []
         for i in other_indices:
             other_solution.append(other_alternatives[i])
         return other_solution
-        
-    
-    

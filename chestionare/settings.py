@@ -29,6 +29,10 @@ TEMPLATE_DIRS = (
     BASE_DIR+'/questionnaires/templates',
 )
 
+#FIXTURE_DIRS = (
+    #BASE_DIR+'/questionnaires/fixtures',
+#)
+
 ALLOWED_HOSTS = []
 
 

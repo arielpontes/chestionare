@@ -1,0 +1,381 @@
+[
+{
+  "pk": 2, 
+  "model": "questionnaires.questionnaire", 
+  "fields": {
+    "name": "How something are you?", 
+    "description": "A questionnaire to determine how something you are."
+  }
+},
+{
+  "pk": 3, 
+  "model": "questionnaires.questionnaire", 
+  "fields": {
+    "name": "How much do you know about Brazil?", 
+    "description": "A quiz to determine how much you know about Brazil."
+  }
+},
+{
+  "pk": 1, 
+  "model": "questionnaires.page", 
+  "fields": {
+    "questionnaire": 3, 
+    "title": "Demographics"
+  }
+},
+{
+  "pk": 2, 
+  "model": "questionnaires.page", 
+  "fields": {
+    "questionnaire": 3, 
+    "title": "Culture"
+  }
+},
+{
+  "pk": 3, 
+  "model": "questionnaires.page", 
+  "fields": {
+    "questionnaire": 3, 
+    "title": "History"
+  }
+},
+{
+  "pk": 1, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "In Brazil, there are no more people than:", 
+    "page": 1
+  }
+},
+{
+  "pk": 2, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "The religion most people claim to practice is:", 
+    "page": 1
+  }
+},
+{
+  "pk": 3, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "In Brazil, most people claim to be:", 
+    "page": 1
+  }
+},
+{
+  "pk": 4, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "The traditional dance in Brazil is:", 
+    "page": 2
+  }
+},
+{
+  "pk": 5, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "The following Metal bands are Brazilian:", 
+    "page": 2
+  }
+},
+{
+  "pk": 6, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "In Brazil people speak:", 
+    "page": 2
+  }
+},
+{
+  "pk": 7, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "What was the first form of government after the Brazilian independence in 1822?", 
+    "page": 3
+  }
+},
+{
+  "pk": 1, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 1, 
+    "description": "90 million"
+  }
+},
+{
+  "pk": 2, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -1, 
+    "question": 1, 
+    "description": "150 million"
+  }
+},
+{
+  "pk": 3, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 1, 
+    "description": "210 million"
+  }
+},
+{
+  "pk": 4, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -1, 
+    "question": 2, 
+    "description": "Protestant Christianity"
+  }
+},
+{
+  "pk": 5, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 2, 
+    "description": "Roman Catholicism"
+  }
+},
+{
+  "pk": 6, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 0, 
+    "question": 2, 
+    "description": "Spiritism"
+  }
+},
+{
+  "pk": 7, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -1, 
+    "question": 2, 
+    "description": "No religion"
+  }
+},
+{
+  "pk": 8, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -1, 
+    "question": 3, 
+    "description": "Black"
+  }
+},
+{
+  "pk": 9, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 1, 
+    "question": 3, 
+    "description": "Mixed race"
+  }
+},
+{
+  "pk": 10, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 3, 
+    "description": "Asian"
+  }
+},
+{
+  "pk": 11, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 3, 
+    "description": "White"
+  }
+},
+{
+  "pk": 12, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 4, 
+    "description": "Salsa"
+  }
+},
+{
+  "pk": 13, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 4, 
+    "description": "Tango"
+  }
+},
+{
+  "pk": 14, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 4, 
+    "description": "Samba"
+  }
+},
+{
+  "pk": 15, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 5, 
+    "description": "Angra"
+  }
+},
+{
+  "pk": 16, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 5, 
+    "description": "Sepultura"
+  }
+},
+{
+  "pk": 17, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 5, 
+    "description": "Gorgoroth"
+  }
+},
+{
+  "pk": 18, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 5, 
+    "description": "Krisiun"
+  }
+},
+{
+  "pk": 19, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 5, 
+    "description": "Gorod"
+  }
+},
+{
+  "pk": 20, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 6, 
+    "description": "Spanish"
+  }
+},
+{
+  "pk": 21, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 6, 
+    "description": "French"
+  }
+},
+{
+  "pk": 22, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 6, 
+    "description": "Portuguese"
+  }
+},
+{
+  "pk": 23, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 6, 
+    "description": "Portuguese and Spanish"
+  }
+},
+{
+  "pk": 24, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 6, 
+    "description": "Brazilian"
+  }
+},
+{
+  "pk": 25, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 0, 
+    "question": 7, 
+    "description": "Republic"
+  }
+},
+{
+  "pk": 26, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 7, 
+    "description": "Monarchy"
+  }
+},
+{
+  "pk": 27, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -1, 
+    "question": 7, 
+    "description": "Theocracy"
+  }
+},
+{
+  "pk": 1, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 3, 
+    "message": "Congrats, voc\u00ea mandou muito! (You did very well)", 
+    "minimum_score": 10, 
+    "title": "Mandou muito!"
+  }
+},
+{
+  "pk": 2, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 3, 
+    "message": "Well, you did ok\u2026 let's hope it goes better next time.", 
+    "minimum_score": 5, 
+    "title": "Hum\u2026 mais ou menos\u2026"
+  }
+},
+{
+  "pk": 3, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 3, 
+    "message": "Sorry, hope you do better next time!", 
+    "minimum_score": 0, 
+    "title": "Putz\u2026"
+  }
+},
+{
+  "pk": 4, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 3, 
+    "message": "Sorry, but you really know sh** about Brazil.", 
+    "minimum_score": -32768, 
+    "title": "Que M***"
+  }
+}
+]
