@@ -6,6 +6,7 @@ class PageInline(admin.TabularInline):
 
 class OutcomeInline(admin.TabularInline):
     model = Outcome
+    extra = 2
 
 class QuestionnaireAdmin(admin.ModelAdmin):
     inlines = [

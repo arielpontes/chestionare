@@ -9,27 +9,16 @@ class Questionnaire(models.Model):
     def __unicode__(self):
         return self.name
     
-    @staticmethod
-    def create_from_dumps():
-        dump_files = ["questionnaire.sql","outcome.sql","page.sql","question.sql","alternative.sql"]
-        for file in dump_files:
-            f = open(settings.BASE_DIR+'/questionnaires/dumps/'+file,'r')
-            sql = f.read()
-            cursor = connection.cursor()
-            cursor.executescript(sql)
-    
-    '''
     def is_valid(self):
-        pages = list(self.page_set)
+        pages = list(self.page_set.all())
         if not pages: return False
         for p in pages:
-            questions = list(p.question_set)
+            questions = list(p.question_set.all())
             if not questions: return False
             for q in questions:
                 if not q.alternative_set.exists(): return False
         if not self.outcome_set.exists(): return False
         return True
-    '''                
 
 class Page(models.Model):
     questionnaire = models.ForeignKey(Questionnaire)
@@ -68,28 +57,28 @@ class Outcome(models.Model):
 # Non database classes
 from forms import PageForm
 
+# This class represents an 'open' questionnaire, one that a user has started answering.
+# It is instanciated based on session data.
+
 class OpenQuestionnaire():
     def __init__(self, request, questionnaire_id):
-        # The request where we store session data about the questionnaire baing answered
+        # The request where we store session data about the questionnaire being answered
         self.request = request
-        # An instance of the current open questionnaire
+        # A Questionnaire instance of the current open questionnaire
         self.questionnaire = Questionnaire.objects.get(id=questionnaire_id)
         # The current page of the questionnaire being answered
         self.page = None
-        # Validity of the questionnaire: Invalid if it doesn't have pages or questions
-        self.invalid_questionnaire = False
+        # Validity of the questionnaire: Invalid if it doesn't have pages, questions or alternatives
+        self.invalid_questionnaire = not self.questionnaire.is_valid()
+        if self.invalid_questionnaire: return None
         # A list of the open questionnaires (in case the user is answering multiple ones at the same time)
         open_questionnaires = request.session.get("open_questionnaires", {})
         # Current questionnaire data taken from request
         current_questionnaire = open_questionnaires.get(str(questionnaire_id), None)
         # If the user is starting test right now
         if not current_questionnaire:
-            # Start from he first page
+            # Start from the first page
             self.page = self.questionnaire.page_set.first()
-            # If there is no first page the questionnaire is invalid
-            if not self.page:
-                self.invalid_questionnaire = True
-                return None
             # Else, set initial information
             current_questionnaire = {
                                         "answers": {},
@@ -110,7 +99,6 @@ class OpenQuestionnaire():
         if request.method == 'POST':
             # If user has posted data, use it to create a bound form 
             self.page_form = PageForm(self.page, request.POST)
-            # And save the answers to the session 
             self.info["answers"][str(self.page.id)] = request.POST
         else:
             # Else create unbound form to be displayed and answered
@@ -135,9 +123,6 @@ class OpenQuestionnaire():
     
     def is_valid(self):
         return self.page_form.is_valid()
-    
-    def best_change(self, alternatives, selected):
-        return 0
     
     # Finish open questionnaire and returns outcome
     def outcome(self):

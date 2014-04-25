@@ -9,8 +9,12 @@ class IndexView(generic.ListView):
     context_object_name = 'questionnaires'
 
     def get_queryset(self):
-        """Returns all questionnaires."""
-        return Questionnaire.objects.all()
+        #Returns all valid questionnaires.
+        questionnaires = list(Questionnaire.objects.all())
+        for q in questionnaires:
+            if not q.is_valid():
+                questionnaires.remove(q)
+        return questionnaires
 
 def solve(request, id):
     answer = OpenQuestionnaire(request, id)
