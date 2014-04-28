@@ -4,24 +4,42 @@
 {% block h1 %}You finished the questionnaire "{{ outcome.questionnaire.name }}"{% endblock %}
 
 {% block content %}
-<h2>You scored {{ outcome.total_score }}: {{ outcome.title }}</h2>
-<div>{{ outcome.message }}</div>
+<h2>You scored {{ outcome.questionnaire.score }}: {{ outcome.title }}</h2>
 <div>
-	<p>If only you had answered the following questions differently, you would have scored {{ outcome.would_have_got }}:</p>
+	<p>If only you had answered the following questions differently…</p>
 	{% if outcome.alternative_outcome %}
-	<p>{{ outcome.alternative_outcome.title }}</p>
 	{% endif %}
-	{% for alternative in outcome.alternative_solution %}
+	{% for question in outcome.alternative_solution %}
 		<ul>
 			<li>
-				{{ alternative.question }}
+				{{ question }}
 				<ul>
-					<li>
-						{{ alternative }}
-					</li>
+					{% if question.post_selected_alternatives %}
+					<p>You could have selected: </p>
+						{% for alternative in question.post_selected_alternatives %}
+						<li>
+							{{ alternative }}
+							<span style="color: green;">
+							(+ {{ alternative.score }})
+							</span>
+						</li>
+						{% endfor %}
+					{% endif %}
+					{% if question.removed_alternatives %}
+					<p>You could NOT have selected: </p>
+						{% for alternative in question.removed_alternatives %}
+						<li>
+							{{ alternative }}
+							<span style="color: red;">
+							({{ alternative.score }})
+							</span>
+						</li>
+						{% endfor %}
+					{% endif %}
 				</ul>
 			</li>
 		</ul>
 	{% endfor %}
+	<p>Then you would have scored <b>{{ outcome.would_have_got }} – {{ outcome.alternative_outcome.title }}</b></p>
 </div>
 {% endblock %}

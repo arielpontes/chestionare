@@ -23,7 +23,7 @@ def solve(request, id):
     if request.method == "POST":
         if answer.is_valid() and not answer.go_to_next_page():
             # If the answer to the open questionnaire is valid and there is no next page, show the results
-            return render(request, 'results.html', { "outcome": answer.outcome() })
+            return render(request, 'results.html', { "outcome": answer.calculate_outcome() })
     return render(request, 'solve.html', { 'answer': answer })
 
 def clear_test(request):
