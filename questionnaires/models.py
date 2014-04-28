@@ -76,7 +76,7 @@ from forms import PageForm
 # This class represents an 'open' questionnaire, one that a user has started answering.
 # It is instanciated based on session data.
 
-class OpenQuestionnaire():
+class OpenQuestionnaire(object):
     def __init__(self, request, questionnaire_id):
         # The request where we store session data about the questionnaire being answered
         self.request = request

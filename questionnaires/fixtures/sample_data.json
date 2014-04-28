@@ -16,6 +16,14 @@
   }
 },
 {
+  "pk": 4, 
+  "model": "questionnaires.questionnaire", 
+  "fields": {
+    "name": "How evil are you?", 
+    "description": "A questionnaire to determine how evil you are."
+  }
+},
+{
   "pk": 1, 
   "model": "questionnaires.page", 
   "fields": {
@@ -37,6 +45,22 @@
   "fields": {
     "questionnaire": 3, 
     "title": "History"
+  }
+},
+{
+  "pk": 4, 
+  "model": "questionnaires.page", 
+  "fields": {
+    "questionnaire": 4, 
+    "title": "Past"
+  }
+},
+{
+  "pk": 5, 
+  "model": "questionnaires.page", 
+  "fields": {
+    "questionnaire": 4, 
+    "title": "Future"
   }
 },
 {
@@ -93,6 +117,14 @@
   "fields": {
     "description": "What was the first form of government after the Brazilian independence in 1822?", 
     "page": 3
+  }
+},
+{
+  "pk": 8, 
+  "model": "questionnaires.question", 
+  "fields": {
+    "description": "Did you use to kill little animals when you were a kid?", 
+    "page": 4
   }
 },
 {
@@ -171,7 +203,7 @@
   "pk": 9, 
   "model": "questionnaires.alternative", 
   "fields": {
-    "score": 1, 
+    "score": 0, 
     "question": 3, 
     "description": "Mixed race"
   }
@@ -339,6 +371,24 @@
   }
 },
 {
+  "pk": 28, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": 2, 
+    "question": 8, 
+    "description": "Yes"
+  }
+},
+{
+  "pk": 29, 
+  "model": "questionnaires.alternative", 
+  "fields": {
+    "score": -2, 
+    "question": 8, 
+    "description": "No"
+  }
+},
+{
   "pk": 1, 
   "model": "questionnaires.outcome", 
   "fields": {
@@ -376,6 +426,26 @@
     "message": "Sorry, but you really know sh** about Brazil.", 
     "minimum_score": -32768, 
     "title": "Que M***"
+  }
+},
+{
+  "pk": 5, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 4, 
+    "message": "Congrats! You're an evil master and you have no scruples.", 
+    "minimum_score": 1, 
+    "title": "Evil master"
+  }
+},
+{
+  "pk": 6, 
+  "model": "questionnaires.outcome", 
+  "fields": {
+    "questionnaire": 4, 
+    "message": "Ohnn, who are you trying to fool? You're nice =)", 
+    "minimum_score": -32768, 
+    "title": "Nice"
   }
 }
 ]
