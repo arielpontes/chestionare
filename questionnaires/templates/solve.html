@@ -6,7 +6,7 @@
 {% block content %}
 <form action="" method="post">
 	<ul>
-	{{ answer.page_form.to_html | safe }}
+	{{ answer.page_form.as_ul }}
 	</ul>
 	<input type="submit" value="Submit">
 </form>
