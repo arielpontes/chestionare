@@ -13,9 +13,6 @@ urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^clear-test$', 'questionnaires.views.clear_test', name='clear_test'),
     url(r'^questionnaires/(\d+)/$', 'questionnaires.views.solve', name='solve'),
-    #url(r'^questionnaires/(\d+)/page(\d+)$', 'questionnaires.views.show', name='show'),
-    
-    url(r'^questionnaires/(\d+)/results$', 'questionnaires.views.results', name='results'),
     
     url(r'^admin/', include(admin.site.urls)),
 )

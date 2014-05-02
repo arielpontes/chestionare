@@ -146,7 +146,7 @@ class QuestionnaireViewTests(TestCase):
         self.assertContains(response, 'You finished the questionnaire "How much do you know about Brazil?"')
         #print response
         self.assertContains(response, 'You scored -25: Que M***')
-        self.assertContains(response, u'If only you had answered the following questions differently…')
+        self.assertContains(response, u'If you had answered the following questions differently…')
         self.assertContains(response, 'The following Metal bands are Brazilian')
         self.assertContains(response, 'You could have selected')
         self.assertContains(response, 'Angra')
@@ -156,7 +156,42 @@ class QuestionnaireViewTests(TestCase):
         self.assertContains(response, 'Gorgoroth')
         self.assertContains(response, 'Gorod')
         self.assertContains(response, u'Then you would have scored')
-        self.assertContains(response, u'-15 – Putz…')
+        self.assertContains(response, u'-7')
+        self.assertContains(response, u'But still…')
+        self.assertContains(response, u'Que M***')
+        self.assertNotContains(response, "This field is required") # Doesn't warn about required fields
+        
+        # Clears session allowing user to solve the questionnaire again
+        response = self.client.get(reverse('solve', args=(3,)))
+        self.assertContains(response, "Demographics")
+    
+    def test_post_all_page_forms_to_get_minus_two_to_solve_view(self):
+        management.call_command('loaddata', 'questionnaires/fixtures/sample_data.json')
+        response = self.client.post("/questionnaires/3/",
+                                    {
+                                        'question_1_answer':1,
+                                        'question_2_answer':4,
+                                        'question_3_answer':8
+                                    }
+                                   )
+        response = self.client.post("/questionnaires/3/",
+                                    {
+                                        'question_4_answer':12,
+                                        'question_5_answer': [15, 16, 18],
+                                        'question_6_answer':20
+                                    }
+                                   )
+        response = self.client.post("/questionnaires/3/",
+                                    {
+                                        'question_7_answer':25
+                                    }
+                                   )
+        # Shows outcome
+        self.assertContains(response, 'You finished the questionnaire "How much do you know about Brazil?"')
+        #print response
+        self.assertContains(response, 'You scored -2: Que M***')
+        self.assertContains(response, u'If only you had answered the following questions differently…')
+        self.assertContains(response, u'2 – Putz…')
         self.assertNotContains(response, "This field is required") # Doesn't warn about required fields
         
         # Clears session allowing user to solve the questionnaire again

@@ -9,7 +9,7 @@ class IndexView(generic.ListView):
     context_object_name = 'questionnaires'
 
     def get_queryset(self):
-        #Returns all valid questionnaires.
+        """ Returns all valid questionnaires. """
         questionnaires = list(Questionnaire.objects.all())
         for q in questionnaires:
             if not q.is_valid():
@@ -30,8 +30,3 @@ def clear_test(request):
     try: request.session.pop("open_questionnaires")
     except: print "whatever"
     return HttpResponse("Clear")
-
-def results(request):
-    request.session.pop("open_questionnaires")
-    questionnaire = Questionnaire.objects.get(id=id)
-    return render(request, 'results.html', { 'questionnaire': questionnaire })

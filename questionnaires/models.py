@@ -28,25 +28,23 @@ class Page(models.Model):
         return self.title
 
 class Question(models.Model):
-    description = models.TextField(max_length=255) # Not enforced on Model/Database level, only affects HTML
+    description = models.TextField(max_length=255)
     page = models.ForeignKey(Page)
     
     def __unicode__(self):
         return self.description
     
+    def selected_alternatives(self):
+        return [a for a in self.alternatives if a.selected ]
+    
+    def alternatives_left_selected(self):
+        return [a for a in self.alternatives if (a.selected and not a.removed) or (a.post_selected)]
+    
     def post_selected_alternatives(self):
-        lst = []
-        for alternative in self.alternatives:
-            if alternative.post_selected:# or alternative.removed:
-                lst.append(alternative)
-        return lst
+        return [a for a in self.alternatives if a.post_selected]
     
     def removed_alternatives(self):
-        lst = []
-        for alternative in self.alternatives:
-            if alternative.removed:
-                lst.append(alternative)
-        return lst
+        return [a for a in self.alternatives if a.removed]
 
 class Alternative(models.Model):
     question = models.ForeignKey(Question)
@@ -57,6 +55,9 @@ class Alternative(models.Model):
     selected = False
     removed = False
     post_selected = False
+    
+    def formatted_score(self):
+        return "%+d" % self.score
     
     def __unicode__(self):
         return self.description
@@ -120,17 +121,19 @@ class OpenQuestionnaire(object):
             # Else create unbound form to be displayed and answered
             self.page_form = PageForm(self.page)
     
-    # Goes to next page and returns True if there is a next page
-    # Sets the questionnaire as done and returns False if there isn't  
     def go_to_next_page(self):
+        """
+        Goes to next page and returns True if there is a next page.
+        Sets the questionnaire as done and returns False if there isn't.
+        """
         previous_page = self.page
-        try:
-            # The next page is the first one in the page_set with an id > the current
-            self.page = self.questionnaire.page_set.filter(id__gt=previous_page.id).first()
+        # The next page is the first one in the page_set with an id > the current
+        self.page = self.questionnaire.page_set.filter(id__gt=previous_page.id).first()
+        if self.page:
             self.info["page"] = self.page.id
             # Update page form with the form for the next page
             self.page_form = PageForm(self.page)
-        except:
+        else:
             # If there is no such page,the questionnaire is done
             self.page = None
             self.info["done"] = True
@@ -140,8 +143,10 @@ class OpenQuestionnaire(object):
     def is_valid(self):
         return self.page_form.is_valid()
     
-    # Finish open questionnaire and returns outcome
     def calculate_outcome(self):
+        """
+        Finish open questionnaire and returns outcome
+        """
         # Get list of open questionnaires being answered by a user
         open_questionnaires = self.request.session.get("open_questionnaires", None)
         # If it is found, remove the current questionnaire from it
@@ -152,9 +157,9 @@ class OpenQuestionnaire(object):
         self.questionnaire.score = 0
         self.questionnaire.pages = list(self.questionnaire.page_set.all())
         # A list with the questions that have the most potential to GIVE points if changed, one per page 
-        self.questionnaire.most_profitable_questions = []
+        most_profitable_questions = []
         # A list with the questions that have the most potential to TAKE points if changed, one per page 
-        self.questionnaire.most_prejudicial_questions = []
+        most_prejudicial_questions = []
         for page in self.questionnaire.pages:
             page.score = 0
             page.questions = list(page.question_set.all())
@@ -163,14 +168,21 @@ class OpenQuestionnaire(object):
             for question in page.questions:
                 # Get ids of the selected alternatives for the question
                 selected_ids = self.info["answers"][str(page.id)]["question_"+str(question.id)+"_answer"]
-                selected_ids = map(lambda id: int(id), selected_ids)
+                selected_ids = [ int(id) for id in selected_ids ]
                 # Get all alternatives
                 question.alternatives = list(question.alternative_set.all())
                 # Calculate max and min punctuation possible for a question
                 question.score = 0
                 question.max_score = 0
                 question.min_score = 0
+                question.best_alternative = question.alternatives[0]
+                question.worst_alternative = question.alternatives[0]
                 for alt in question.alternatives:
+                    if alt.score > question.best_alternative:
+                        question.best_alternative = alt
+                    if alt.score < question.worst_alternative:
+                        question.worst_alternative = alt
+                    
                     if alt.score > 0:
                         question.max_score += alt.score
                     elif alt.score < 0:
@@ -192,24 +204,23 @@ class OpenQuestionnaire(object):
                 
                 if question.can_gain > page.most_profitable_question.can_gain:
                     page.most_profitable_question = question
-                    self.questionnaire.most_profitable_questions.append(question)
                 if question.can_lose > page.most_prejudicial_question.can_lose:
                     page.most_prejudicial_question = question
-                    self.questionnaire.most_prejudicial_questions.append(question)
-                
+            
+            most_profitable_questions.append(page.most_profitable_question)
+            most_prejudicial_questions.append(page.most_prejudicial_question)
         # print "Score: "+str(self.questionnaire.score)
-        # Order by gain
-        self.questionnaire.most_profitable_questions = list(reversed(sorted(
-                                                                      self.questionnaire.most_profitable_questions,
-                                                                      key=lambda question: question.can_gain
-                                                                      )))
-        # Order by loss
-        self.questionnaire.most_prejudicial_questions = list(reversed(sorted(
-                                                                      self.questionnaire.most_prejudicial_questions,
-                                                                      key=lambda question: question.can_lose
-                                                                      )))
+        # Order by potential gain
+        mpf = sorted(most_profitable_questions,
+                     key=lambda question: question.can_gain)
         
+        self.questionnaire.most_profitable_questions = list(reversed(mpf))
         
+        # Order by potential loss
+        mpf = sorted(most_prejudicial_questions,
+                     key=lambda question: question.can_lose)
+        
+        self.questionnaire.most_prejudicial_questions = list(reversed(mpf))
         better_score = self.questionnaire.score
         better_outcome = None
         
@@ -238,7 +249,8 @@ class OpenQuestionnaire(object):
             i+=1
         #if not self.outcome: return None
         if self.questionnaire.score == better_score:
-            # If no score could result in a higher outcome, look for a worse solution
+            # If no score could result in a higher outcome,
+            # look for a worse solution
             self.outcome.alternative_outcome = worse_outcome
             self.calculate_alternative_solution(worse_score, -1)
         else:
@@ -249,6 +261,11 @@ class OpenQuestionnaire(object):
         #outcomes = Outcome.objects.
     
     def calculate_alternative_solution(self, other_score, better):
+        """
+        Calculates the minimum number of alternatives that have to be changed
+        in order for the resulting outcome to be different, marking the
+        alternative objects as "removed" or "post selected" 
+        """
         if better+1:
             question_list = self.questionnaire.most_profitable_questions
         else:
@@ -256,23 +273,31 @@ class OpenQuestionnaire(object):
         # A list with the questions that had to be changed
         other_solution = []
         would_have_got = self.questionnaire.score
-        i = 0
-        while i < len(question_list):
-            question = question_list[i]
-            for alternative in question.alternatives:
-                if alternative.selected:
-                    if alternative.score*better < 0:
-                        would_have_got -= alternative.score
-                        #alternative.selected = False
-                        alternative.removed = True
-                else:
-                    if alternative.score*better > 0:
-                        would_have_got += alternative.score
-                        alternative.post_selected = True
-                if would_have_got >= other_score: break
+        for question in question_list:
             other_solution.append(question)
-            if would_have_got >= other_score: break
-            i += 1
+            # Deselect undesired answers
+            for alternative in question.alternatives:
+                if alternative.selected and alternative.score*better < 0:
+                    would_have_got -= alternative.score
+                    #alternative.selected = False
+                    alternative.removed = True
+                    if would_have_got >= other_score: break
+            if question.alternatives_left_selected() and would_have_got >= other_score:
+                # If enough points have been accumulated in order to pass the
+                # user to another outcome, stop looking for more questions
+                # to change
+                break
+            # Select desired answers
+            for alternative in question.alternatives:
+                if (not alternative.selected) and alternative.score*better > 0:
+                    would_have_got += alternative.score
+                    alternative.post_selected = True
+            # If changing answers to this question is enough, break
+            if would_have_got >= other_score:
+                break
+        else:
+            self.outcome.alternative_outcome = self.outcome
+        
         self.outcome.would_have_got = would_have_got
         self.outcome.alternative_solution = other_solution
         #print other_solution
